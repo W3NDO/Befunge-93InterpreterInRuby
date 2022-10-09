@@ -1,12 +1,20 @@
 require 'spec_helper'
-require_relative '../Interpreter'
+require_relative '../interpreter'
+require_relative '../stack'
 
 RSpec.describe Interpreter do
     context "testing Traversal" do
         let(:int) {Interpreter.new}
         let(:test_field) { [ [1,2,3], [4,5,6], [7,8,9] ] }
 
+        it "has a stack with stack methods available to it." do
+            expect(int.stack.top).to eq nil
+            int.stack.push_2_stack(2)
+            expect(int.stack.size).to eq 1
+        end
+
         it "moves one step top the right" do
+            expect(int.stack.size)
             expect(int.traverse_field(">", [0,0], test_field)).to eq [1,0]
         end
 
@@ -45,10 +53,11 @@ RSpec.describe Interpreter do
             expect(int.traverse_field("^", [0,0], test_field)).to eq [0,0]
         end
          
-        it "moves in a random cardinal direction." do
-            temp_res_1 = int.traverse_field("?", [2,2], test_field)
-            temp_res_2 = int.traverse_field("?", [0,2], test_field)
-            expect(temp_res_1 == temp_res_2).to be false
+        xit "moves in a random cardinal direction." do # fix this
+            # temp_res_1 = int.traverse_field("?", [2,2], test_field)
+            # temp_res_2 = int.traverse_field("?", [0,2], test_field)
+            # expect(temp_res_1 == temp_res_2).to be false
+            expect{ int.traverse_field("?", [2,2], test_field) }.to invoke(:traverse_field).on(int)
         end
 
         it "skips next cell" do
@@ -57,15 +66,23 @@ RSpec.describe Interpreter do
             expect(int.traverse_field("#", [2,1], test_field)).to eq [1,2]
         end
 
-        xit "triggers a put call"
-
-        xit "triggers a get call"
-
         it "does nothing (trigger a no-op)" do
             expect(int.traverse_field(" ", [0,2], test_field)).to eq [1,2]
         end
 
+        xit "triggers a put call" do
+            stk.push_2_stack(2)
+            stk.push_2_stack(3)
+        end
+
+
+        xit "triggers a get call"
+
         xit "ends program" 
+    end
+
+    context "#read_cell" do
+        it "pushes the value onto the stack if "
     end
 
 end
