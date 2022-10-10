@@ -3,13 +3,18 @@ require './stack'
 class Interpreter
 
     attr_accessor :stack
+    attr_accessor :current_position
+    attr_reader :NAV_CALLS
+
+    NAV_CALLS = [">", "<", "^", "v", "p", "g", "?", "#", "\\", "@", " "]
     
     def initialize
         self.stack = Stack.new
+        self.current_position = [0,0]
     end
 
-    def find_value(position, array)
-        return array[position[0]][position[1]]
+    def find_value(position, array) #position is [x,y], but because it is a 2D array we search by y first, then x
+        return array[position[1]][position[0]]
     end
 
     def traverse_field(direction, current_position, array) # returns new position
@@ -30,7 +35,7 @@ class Interpreter
             else
                 current_position[0] += 1
             end
-            current_position
+            self.current_position = current_position
         when "<"
             if current_position[0] == 0 and current_position[1] == 0
                 current_position = current_position  
@@ -40,7 +45,7 @@ class Interpreter
             else
                 current_position[0] -= 1
             end
-            current_position
+            self.current_position = current_position
         when "^"
             if current_position[0] == 0 and current_position[1] == 0
                 current_position = current_position 
@@ -50,7 +55,7 @@ class Interpreter
             else
                 current_position[1] -= 1
             end
-            current_position
+            self.current_position = current_position
         when "v"
             if current_position[0] == width and current_position[1] == height
                 current_position = current_position 
@@ -60,7 +65,7 @@ class Interpreter
             else
                 current_position[1] += 1
             end
-            current_position
+            self.current_position = current_position
         when "?" 
             traverse_field([">", "<", "^", "v"].sample, current_position, array) # call a random traversal direction
         when "#"
@@ -79,7 +84,7 @@ class Interpreter
                     current_position[0]+=2
                 end
             end
-            current_position
+            self.current_position = current_position
         when " "
             traverse_field(">", current_position, array)
         # when "@"
@@ -96,17 +101,25 @@ class Interpreter
         # End program ( @ )
         # a put call ( p )
         # a get call ( g )
-        read_cell(current_position, array)
-        current_position
+        # read_cell(self.current_position, array)
+        self.current_position
     end
 
-    def read_cell(position, array)
-        
+    def read_cell(position, array) # array will always be 2D
+        cell_value = find_value(position, array)
+        if NAV_CALLS.include?( cell_value )
+            p "calling nav with #{cell_value} \n"
+            traverse_field(cell_value, self.current_position, array)
+        else
+            self.stack.push_2_stack(cell_value)
+            traverse_field(">", self.current_position, array)
+        end
+        cell_value
     end
 end
 
-# sample_input = [
-#     [>,9,8,7,v,>,.,v],
-#     [v,4,5,6,<, , ,:,],
-#     [>,3,2,1, ,^, ,_,@]
-# ]
+sample_input = [
+    # [>,9,8,7,v,>,.,v],
+    # [v,4,5,6,<, , ,:,],
+    # [>,3,2,1, ,^, ,_,@]
+]
