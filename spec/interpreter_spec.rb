@@ -75,11 +75,15 @@ RSpec.describe Interpreter do
             expect(int.current_position).to eq [0,0]
         end
          
-        xit "moves in a random cardinal direction." do # fix this
+        it "moves in a random cardinal direction." do # fix this
             # temp_res_1 = int.traverse_field("?", [2,2], test_field)
             # temp_res_2 = int.traverse_field("?", [0,2], test_field)
             # expect(temp_res_1 == temp_res_2).to be false
-            expect{ int.traverse_field("?", [2,2], test_field) }.to invoke(:traverse_field).on(int)
+            #expect{ int.traverse_field("?", [2,2], test_field) }.to invoke(:traverse_field).on(int)
+
+            expect(int).to receive(:traverse_field).and_call_original
+            expect(int).to receive(:traverse_field).with([">", "<", "^", "v"].sample, int.current_position, test_field)
+            int.traverse_field("?", [0,0], test_field)
         end
 
         it "skips next cell" do
@@ -137,3 +141,4 @@ RSpec.describe Interpreter do
     end
 
 end
+# these tasks are getting harder by the day and I am not sure if I can actually finish them. But anyway

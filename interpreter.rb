@@ -67,7 +67,7 @@ class Interpreter
             end
             self.current_position = current_position
         when "?" 
-            traverse_field([">", "<", "^", "v"].sample, current_position, array) # call a random traversal direction
+            traverse_field([">", "<", "^", "v"].sample, self.current_position, array) # call a random traversal direction
         when "#"
             if current_position[0] == width and current_position[1] == height
                 current_position = current_position  
